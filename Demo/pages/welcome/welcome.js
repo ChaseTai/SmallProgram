@@ -5,7 +5,7 @@ Page({
     //   url: '../posts/post',
     // })
     // 同级页面跳转
-    wx.redirectTo({
+    wx.navigateTo({
       url: '../posts/post',
     })
   }
