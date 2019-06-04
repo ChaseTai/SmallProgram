@@ -1,8 +1,12 @@
 var postsData = require('../../../data/posts-data.js')
-
+var app = getApp();
 Page({
-  data:{},
+  data:{
+    collected: null,
+    isPlayingMusic: false
+  },
   onLoad:function(option){
+    var globalData = app.globalData;
     var postId = option.id;
     this.data.currentPostId = postId;
     var postData = postsData.postList[postId];
@@ -20,19 +24,51 @@ Page({
     var postsCollected = wx.getStorageSync('posts_Collected');
     if(postsCollected){
       var postCollected = postsCollected[postId];
-      this.setData({
-        collected: postCollected
-      });
+      if (postCollected == undefined){
+        this.setData({
+          collected: false
+        });
+      }else{
+        this.setData({
+          collected: postCollected
+        });
+      }
     }else{
       var postsCollected = {};
       postsCollected[postId] = false;
       wx.setStorageSync('posts_Collected', postsCollected);
     }
+
+    if(app.globalData.g_isPlayingMusic){
+      this.setData({
+        isPlayingMusic: true
+      })
+    }
+    this.setMusicMonitor();
   },
+
+  setMusicMonitor: function(){
+    var that = this;
+    var backgroundAudio = wx.getBackgroundAudioManager();
+    backgroundAudio.onPlay(function () {
+      that.setData({
+        isPlayingMusic: true
+      })
+      app.globalData.g_isPlayingMusic = true;
+    });
+    backgroundAudio.onPause(function () {
+      that.setData({
+        isPlayingMusic: false
+      })
+      app.globalData.g_isPlayingMusic = false;
+    })
+  },
+
   onCollectionTap: function(event){
     this.getPostCollectedSyc();
     // this.getPostCollectedAsy();
   },
+
   getPostCollectedAsy:function(){
     var that = this;
     wx.getStorage({
@@ -114,10 +150,29 @@ Page({
   },
 
   onMusicTap:function(event){
-    wx.playBackgroundAudio({
-      dataUrl: 'http://ws.stream.qqmusic.qq.com/C100003507bR0gDKBm.m4a?fromtag=38',
-      title: '夜夜夜夜-齐秦',
-      coverImgUrl: 'http://y.gtimg.cn/music/photo_new/T002R150x150M000001TEc6V0kjpVC.jpg?max_age=2592000'
-    })
+    var currentPostId = this.data.currentPostId;
+    var postData = postsData.postList[currentPostId];
+    var isPlayingMusic = this.data.isPlayingMusic;
+    var backgroundAudio = wx.getBackgroundAudioManager();
+    if(isPlayingMusic){
+      // wx.pauseBackgroundAudio();
+      backgroundAudio.pause();
+      this.setData({
+        isPlayingMusic: false
+      })
+    }else{
+      backgroundAudio.src = postData.music.url;
+      backgroundAudio.title = postData.music.title;
+      backgroundAudio.coverImgUrl = postData.music.coverImg;
+      backgroundAudio.play();
+      // wx.playBackgroundAudio({
+      //   dataUrl: postData.music.url,
+      //   title: postData.music.title,
+      //   coverImgUrl: postData.music.coverImg
+      // })
+      this.setData({
+        isPlayingMusic: true
+      })
+    }
   }
 })
