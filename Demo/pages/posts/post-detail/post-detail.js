@@ -63,7 +63,14 @@ Page({
       })
       app.globalData.g_isPlayingMusic = false;
       app.globalData.g_currentMusicPostId = null;
-    })
+    });
+    backgroundAudio.onEnded(function () {
+      that.setData({
+        isPlayingMusic: false
+      })
+      app.globalData.g_isPlayingMusic = false;
+      app.globalData.g_currentMusicPostId = null;
+    });
   },
 
   onCollectionTap: function(event){
