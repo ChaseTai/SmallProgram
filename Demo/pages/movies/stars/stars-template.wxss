@@ -1,7 +1,6 @@
 .stars-container{
   display: flex;
   flex-direction: row;
-  line-height: 17rpx;
 }
 
 .stars{
@@ -9,6 +8,7 @@
   flex-direction: row;
   height: 17rpx;
   margin-right: 24rpx;
+  margin-top: 6rpx;
 }
 
 .stars image{
@@ -19,5 +19,4 @@
 
 .star-score{
   color: #1f3463;
-  vertical-align: middle;
 }

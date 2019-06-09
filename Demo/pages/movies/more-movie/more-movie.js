@@ -43,6 +43,7 @@ Page({
     var refreshUrl = this.data.requestUrl + "?start=" + this.data.totalCount + "&count=20";
     this.data.movies = {};
     this.data.isEmpty = true;
+    this.data.totalCount = 0;
     util.http(refreshUrl, this.processDoubanData);
     wx.showNavigationBarLoading();
   },
